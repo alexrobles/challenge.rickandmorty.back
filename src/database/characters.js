@@ -36,21 +36,11 @@ const getCharacterIdsAsFavorites = async (res) => {
     }
 } 
 
-const executeAsyncCode = async () => {
-    try {
-        const c = await getCharacterIdsAsFavorites();
-        console.log(c);
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-executeAsyncCode();
-
 const createCharacter = async (req, res) => {
-    const character = req.body;
-    console.log(character);
+   
     try {
+        const character = req.body;
+        const poolConnection = await createConnection();
         const sql = `INSERT INTO characters 
         (character_id,name, status, species, type, gender, origin, image, url,favorite, created) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -67,7 +57,8 @@ const createCharacter = async (req, res) => {
             character.favorite,
             character.created,
         ];
-        const [result] = await pool.query(sql,values);
+        const [result] = await poolConnection.query(sql,values);
+        console.log(result);
         res.status(200).send({
             message: "Guardado correctamente",
             code: "",
